@@ -2,7 +2,7 @@
 
 **Ohjelmointikieli**: Python  
 **Muut hallitut kielet:** JavaScript  
-**Dokumentaation kieli:** suomi
+**Dokumentaation kieli:** suomi  
 **Opinto-ohjelma:** TKT
 
 **Algoritmit ja tietorakenteet:** Shunting Yard-algoritmi ja pino
