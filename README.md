@@ -1,6 +1,6 @@
 # Tiralabra
 
-#### [Käyttöohje](https://github.com/eerolasi/tiralabra/blob/main/dokumentaatio/käyttöohje.md)
+#### [Käyttöohje](https://github.com/eerolasi/tiralabra/blob/main/dokumentaatio/kayttoohje.md)
 
 #### Dokumentit
 - [Määrittelydokumentti](https://github.com/eerolasi/tiralabra/blob/main/dokumentaatio/maarittelydokumentti.md)
