@@ -1,2 +1,2 @@
 ## Testauskattavuus
-![testausdokumentti](https://github.com/eerolasi/tiralabra/dokumentaatio/testauskattavuus.png)
+![testausdokumentti](https://github.com/eerolasi/tiralabra/blob/main/dokumentaatio/testauskattavuus.png)
