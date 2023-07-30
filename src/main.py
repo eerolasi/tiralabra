@@ -1,5 +1,6 @@
 from laskin import Laskin
 
+
 def main():
     """Sovelluksen käynnistävä metodi.
     """
@@ -9,6 +10,7 @@ def main():
             break
         laskin = Laskin(syote)
         print(laskin.laske())
+
 
 if __name__ == "__main__":
     main()

@@ -25,5 +25,3 @@ class TestLaskin(unittest.TestCase):
 
     def test_laske_toimii(self):
         self.assertEqual(self.laskin.laske(), 2)
-
-    

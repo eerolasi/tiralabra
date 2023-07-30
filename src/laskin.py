@@ -25,13 +25,13 @@ class Laskin:
                 luku += merkki
             else:
                 if luku:
-                    postfix.append(luku) 
+                    postfix.append(luku)
                     luku = ""
-                if merkki == "(": 
-                    operaattorit.append(merkki) 
+                if merkki == "(":
+                    operaattorit.append(merkki)
                 elif merkki == ")":
                     while operaattorit[-1] != "(":
-                        postfix.append(operaattorit.pop()) 
+                        postfix.append(operaattorit.pop())
                     operaattorit.pop()
             if merkki in "+-*/^":
                 while operaattorit and self.precedence(merkki) <= self.precedence(operaattorit[-1]):
@@ -54,7 +54,7 @@ class Laskin:
         """
         prioriteetit = {"+": 1, "-": 1, "*": 2, "/": 2}
         return prioriteetit.get(operaattori, 0)
-    
+
     def laske(self):
         """Palauttaa laskutoimituksen tuloksen.
 
@@ -71,10 +71,9 @@ class Laskin:
                 vasen = pino.pop()
                 tulos = self.laskutoimitus(merkki, vasen, oikea)
                 pino.append(tulos)
-        
+
         self.tulos = pino.pop()
-        return self.tulos   
-    
+        return self.tulos
 
     def laskutoimitus(self, operaattori, vasen, oikea):
         """Laskee laskutoimituksen.
@@ -96,4 +95,3 @@ class Laskin:
         elif operaattori == "/":
             return vasen / oikea
         return 0
-        
