@@ -1,3 +1,6 @@
+from decimal import Decimal
+
+
 class Laskin:
     """Laskimen toiminnasta vastaava luokka."""
 
@@ -10,37 +13,54 @@ class Laskin:
         self.syote = syote
         self.tulos = 0
 
-    def shunting_yard(self):
-        """Muuntaa infix-notaation postfix-notaatioksi shunting yard-algoritmilla.
+    def tokenize(self):
+        """Palauttaa laskutoimituksksen merkit listana, jossa luvut on muunnettu desimaaliluvuiksi.
 
         Returns:
-            list: lauseke Postfix-notaatiossa.
+            list: Laskutoimituksen merkit listana.
         """
-        postfix = []
-        operaattorit = []
+        merkit = []
         luku = ""
 
         for merkki in self.syote:
             if merkki.isdigit():
                 luku += merkki
+            elif merkki == ".":
+                luku += merkki
             else:
                 if luku:
-                    postfix.append(luku)
+                    merkit.append(Decimal(luku))
                     luku = ""
-                if merkki == "(":
-                    operaattorit.append(merkki)
-                elif merkki == ")":
-                    while operaattorit[-1] != "(":
-                        postfix.append(operaattorit.pop())
-                    operaattorit.pop()
-            if merkki in "+-*/^":
-                while operaattorit and self.precedence(merkki) <= self.precedence(operaattorit[-1]):
+                merkit.append(merkki)
+        if luku:
+            merkit.append(Decimal(luku))
+        return merkit
+
+    def shunting_yard(self):
+        """Palauttaa laskutoimituksen merkit muunnettuna infix-notaatiosta postfix-notaatioon.
+
+        Returns:
+            list: Laskutoimituksen merkit listana.
+        """
+        postfix = []
+        operaattorit = []
+        syote_lista = self.tokenize()
+        for merkki in syote_lista:
+            if isinstance(merkki, Decimal):
+                postfix.append(merkki)
+            elif merkki == "(":
+                operaattorit.append(merkki)
+            elif merkki == ")":
+                while operaattorit[-1] != "(":
+                    postfix.append(operaattorit.pop())
+                operaattorit.pop()
+            elif merkki in "+-*/":
+                while operaattorit \
+                        and self.precedence(merkki) <= self.precedence(operaattorit[-1]):
                     postfix.append(operaattorit.pop())
                 operaattorit.append(merkki)
-        postfix.append(luku)
         while operaattorit:
             postfix.append(operaattorit.pop())
-
         return postfix
 
     def precedence(self, operaattori):
@@ -59,13 +79,13 @@ class Laskin:
         """Palauttaa laskutoimituksen tuloksen.
 
         Returns:
-            float: Laskutoimituksen tulos.
+            Decimal: Laskutoimituksen tulos.
         """
         postfix = self.shunting_yard()
         pino = []
         for merkki in postfix:
-            if merkki.isdigit():
-                pino.append(float(merkki))
+            if isinstance(merkki, Decimal):
+                pino.append(merkki)
             else:
                 oikea = pino.pop()
                 vasen = pino.pop()
@@ -76,22 +96,22 @@ class Laskin:
         return self.tulos
 
     def laskutoimitus(self, operaattori, vasen, oikea):
-        """Laskee laskutoimituksen.
+        """Palauttaa laskutoimituksen tuloksen.
 
         Args:
             operaattori (string): Laskutoimituksen operaattori.
-            vasen (float): Laskutoimituksen vasen operandi.
-            oikea (float): Laskutoimituksen oikea operandi.
+            vasen (Decimal): Laskutoimituksen vasen operandi.
+            oikea (Decimal): Laskutoimituksen oikea operandi.
 
         Returns:
-            float: Laskutoimituksen tulos.
+            Decimal: Laskutoimituksen tulos.
         """
         if operaattori == "+":
             return vasen + oikea
-        elif operaattori == "-":
+        if operaattori == "-":
             return vasen - oikea
-        elif operaattori == "*":
+        if operaattori == "*":
             return vasen * oikea
-        elif operaattori == "/":
+        if operaattori == "/":
             return vasen / oikea
         return 0
