@@ -1,6 +1,11 @@
 from decimal import Decimal
 
 
+class VirheellinenSyote(Exception):
+
+    pass
+
+
 class Laskin:
     """Laskimen toiminnasta vastaava luokka."""
 
@@ -11,7 +16,7 @@ class Laskin:
             syote (str): Laskutoimitus infix-notaatiossa.
         """
         self.syote = syote
-        self.tulos = 0
+        self.tulos = ""
 
     def tokenize(self):
         """Palauttaa laskutoimituksksen merkit listana, jossa luvut on muunnettu desimaaliluvuiksi.
@@ -59,6 +64,8 @@ class Laskin:
                         and self.precedence(merkki) <= self.precedence(operaattorit[-1]):
                     postfix.append(operaattorit.pop())
                 operaattorit.append(merkki)
+            else:
+                raise VirheellinenSyote("Virheellinen syöte!")
         while operaattorit:
             postfix.append(operaattorit.pop())
         return postfix
@@ -112,6 +119,4 @@ class Laskin:
             return vasen - oikea
         if operaattori == "*":
             return vasen * oikea
-        if operaattori == "/":
-            return vasen / oikea
-        return 0
+        return vasen / oikea
