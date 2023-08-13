@@ -62,6 +62,7 @@ class Laskin:
             postfix.append(operaattorit.pop())
         return postfix
 
+
     def precedence(self, operaattori):
         """Palauttaa operaattorin prioriteetin.
 

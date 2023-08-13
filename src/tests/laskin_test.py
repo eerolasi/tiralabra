@@ -10,7 +10,7 @@ class TestLaskin(unittest.TestCase):
         self.syote2 = "3^3"
 
     def test_laskimen_tulos_alustetaan_oikein(self):
-        self.assertEqual(self.laskin._tulos, None)
+        self.assertEqual(self.laskin.tulos, None)
 
     def test_tokenize_toimii(self):
         self.assertEqual(self.laskin.tokenize(self.syote), ["(", Decimal(
