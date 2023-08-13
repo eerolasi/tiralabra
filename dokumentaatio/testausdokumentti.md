@@ -10,10 +10,17 @@ Sovelluslogiikka on testattu automaattisella yksikkötestauksella.
 ## Testien suorittaminen
 GitHub Actions suorittaa testit aina GitHubiin uuden koodin pushauksen yhteydessä.
 
+
 ### Käynnistä virtuaaliympäristö juurihakemistossa
 ```
 poetry shell
 ```
+
+### Asenna riippuvuudet
+```
+poetry install 
+```
+
 ### Suorita testit
 ```
 poetry run invoke test
