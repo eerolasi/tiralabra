@@ -1,24 +1,13 @@
 from decimal import Decimal
 
 
-class VirheellinenSyote(Exception):
-
-    pass
-
-
 class Laskin:
     """Laskimen toiminnasta vastaava luokka."""
 
-    def __init__(self, syote):
-        """Konstruktori, joka alustaa laskimen.
+    def __init__(self):
+        self.tulos = None
 
-        Args:
-            syote (str): Laskutoimitus infix-notaatiossa.
-        """
-        self.syote = syote
-        self.tulos = ""
-
-    def tokenize(self):
+    def tokenize(self, syote):
         """Palauttaa laskutoimituksksen merkit listana, jossa luvut on muunnettu desimaaliluvuiksi.
 
         Returns:
@@ -27,7 +16,7 @@ class Laskin:
         merkit = []
         luku = ""
 
-        for merkki in self.syote:
+        for merkki in syote:
             if merkki.isdigit():
                 luku += merkki
             elif merkki == ".":
@@ -41,15 +30,19 @@ class Laskin:
             merkit.append(Decimal(luku))
         return merkit
 
-    def shunting_yard(self):
+    def shunting_yard(self, syote):
         """Palauttaa laskutoimituksen merkit muunnettuna infix-notaatiosta postfix-notaatioon.
+
+        Args:
+            syote (str): Laskutoimitus infix-notaatiossa.
 
         Returns:
             list: Laskutoimituksen merkit listana.
         """
         postfix = []
         operaattorit = []
-        syote_lista = self.tokenize()
+        syote_lista = self.tokenize(syote)
+
         for merkki in syote_lista:
             if isinstance(merkki, Decimal):
                 postfix.append(merkki)
@@ -59,13 +52,12 @@ class Laskin:
                 while operaattorit[-1] != "(":
                     postfix.append(operaattorit.pop())
                 operaattorit.pop()
-            elif merkki in "+-*/":
+            elif merkki in "+-*/^":
                 while operaattorit \
                         and self.precedence(merkki) <= self.precedence(operaattorit[-1]):
                     postfix.append(operaattorit.pop())
                 operaattorit.append(merkki)
-            else:
-                raise VirheellinenSyote("Virheellinen syöte!")
+
         while operaattorit:
             postfix.append(operaattorit.pop())
         return postfix
@@ -79,16 +71,16 @@ class Laskin:
         Returns:
             int: Operaattorin prioriteetti.
         """
-        prioriteetit = {"+": 1, "-": 1, "*": 2, "/": 2}
+        prioriteetit = {"+": 1, "-": 1, "*": 2, "/": 2, "^": 3}
         return prioriteetit.get(operaattori, 0)
 
-    def laske(self):
+    def laske(self, syote):
         """Palauttaa laskutoimituksen tuloksen.
 
         Returns:
             Decimal: Laskutoimituksen tulos.
         """
-        postfix = self.shunting_yard()
+        postfix = self.shunting_yard(syote)
         pino = []
         for merkki in postfix:
             if isinstance(merkki, Decimal):
@@ -119,4 +111,7 @@ class Laskin:
             return vasen - oikea
         if operaattori == "*":
             return vasen * oikea
-        return vasen / oikea
+        if operaattori == "/":
+            return vasen / oikea
+        if operaattori == "^":
+            return vasen ** oikea

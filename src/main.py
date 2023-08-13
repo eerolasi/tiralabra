@@ -1,15 +1,15 @@
-from laskin import Laskin
+from tkinter import Tk
+from ui.ui import UI
 
 
 def main():
     """Sovelluksen käynnistävä metodi.
     """
-    while True:
-        syote = input("Anna laskutoimitus (tyhjä lopettaa): ")
-        if syote == "":
-            break
-        laskin = Laskin(syote)
-        print(laskin.laske())
+    window = Tk()
+    window.title("Laskin")
+    ui = UI(window)
+    ui.start()
+    window.mainloop()
 
 
 if __name__ == "__main__":
