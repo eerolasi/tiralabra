@@ -51,20 +51,50 @@ class UI:
             row=4, column=4, padx=5, pady=5
         )
 
+        ttk.Button(self._root, text="del", command=self._poista).grid(
+            row=5, column=2, padx=5, pady=5
+        )
+
+        ttk.Button(self._root, text="+/-", command=self._vaihda_etumerkki).grid(
+            row=5, column=0, padx=5, pady=5
+        )
+
     def _lisaa(self, merkki):
         """Lisää merkin syötteeseen.
 
         Args:
             merkki (str): Lisättävä merkki.
         """
+        if self._syote.get() == "Error":
+            self._syote.delete(0, ttk.END)
+
         self._syote.insert(ttk.END, merkki)
+
+    def _vaihda_etumerkki(self):
+        """Vaihtaa luvun etumerkin."""
+        syote = self._syote.get()
+
+        if syote and syote[0] == "-":
+            self._syote.delete(0)
+        else:
+            self._syote.insert(0, "-")
 
     def _laske(self):
         """Laskee laskutoimituksen tuloksen.
         """
-        tulos = self._laskin.laske(self._syote.get())
-        self._syote.delete(0, ttk.END)
-        self._syote.insert(ttk.END, tulos)
+
+        try:
+            tulos = self._laskin.laske(self._syote.get())
+            self._syote.delete(0, ttk.END)
+            self._syote.insert(ttk.END, tulos)
+        except ValueError:
+            self._syote.delete(0, ttk.END)
+            self._syote.insert(ttk.END, "Error")
+
+    def _poista(self):
+        """Poistaa syötteen viimeisen merkin.
+        """
+        self._syote.delete(len(self._syote.get()) - 1, ttk.END)
 
     def _nollaa(self):
         """Nollaa syötteen.

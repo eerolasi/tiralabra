@@ -5,6 +5,7 @@ class Laskin:
     """Laskimen toiminnasta vastaava luokka."""
 
     def __init__(self):
+        """Luokan konstruktori."""
         self.tulos = None
 
     def tokenize(self, syote):
@@ -42,7 +43,6 @@ class Laskin:
         postfix = []
         operaattorit = []
         syote_lista = self.tokenize(syote)
-
         for merkki in syote_lista:
             if isinstance(merkki, Decimal):
                 postfix.append(merkki)
@@ -52,6 +52,10 @@ class Laskin:
                 while operaattorit[-1] != "(":
                     postfix.append(operaattorit.pop())
                 operaattorit.pop()
+            elif merkki == "-" and not postfix:
+                if not postfix or isinstance(postfix[-1], str):
+                    postfix.append(Decimal(0))
+                operaattorit.append(merkki)
             elif merkki in "+-*/^":
                 while operaattorit \
                         and self.precedence(merkki) <= self.precedence(operaattorit[-1]):
@@ -61,7 +65,6 @@ class Laskin:
         while operaattorit:
             postfix.append(operaattorit.pop())
         return postfix
-
 
     def precedence(self, operaattori):
         """Palauttaa operaattorin prioriteetin.
@@ -113,6 +116,8 @@ class Laskin:
         if operaattori == "*":
             return vasen * oikea
         if operaattori == "/":
+            if oikea == 0:
+                raise ValueError("Nollalla ei voi jakaa.")
             return vasen / oikea
         if operaattori == "^":
             return vasen ** oikea
