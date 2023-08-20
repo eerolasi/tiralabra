@@ -61,6 +61,8 @@ class Laskin:
                         and self.precedence(merkki) <= self.precedence(operaattorit[-1]):
                     postfix.append(operaattorit.pop())
                 operaattorit.append(merkki)
+            else:
+                raise SyntaxError("Virheellinen laskutoimitus.")
 
         while operaattorit:
             postfix.append(operaattorit.pop())
@@ -117,7 +119,7 @@ class Laskin:
             return vasen * oikea
         if operaattori == "/":
             if oikea == 0:
-                raise ValueError("Nollalla ei voi jakaa.")
+                raise ZeroDivisionError("Nollalla ei voi jakaa.")
             return vasen / oikea
         if operaattori == "^":
             return vasen ** oikea
