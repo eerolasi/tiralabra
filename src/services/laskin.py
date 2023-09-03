@@ -15,7 +15,6 @@ class Laskin:
         Args:
             merkki (str): Lisättävä merkki.
         """
-
         self.lauseke += str(merkki)
 
     def poista_merkki(self):

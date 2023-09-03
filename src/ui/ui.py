@@ -1,5 +1,4 @@
 import tkinter as ttk
-from math import pi
 
 from services.laskin import Laskin
 
@@ -77,10 +76,6 @@ class UI:
             row=5, column=4, padx=5, pady=5
         )
 
-        ttk.Button(self._root, text="π", command=lambda i=i: self._lisaa(pi)).grid(
-            row=5, column=0, padx=5, pady=5
-        )
-
         ttk.Button(self._root, text="C", command=self._poista_merkki).grid(
             row=4, column=3, padx=5, pady=5
         )
@@ -95,6 +90,16 @@ class UI:
             self._laske()
             return
 
+        if merkki.isalpha():
+            if merkki.lower() == "s":
+                self._lisaa_funktio("sin")
+            elif merkki.lower() == "c":
+                self._lisaa_funktio("cos")
+            elif merkki.lower() == "t":
+                self._lisaa_funktio("tan")
+            elif merkki.lower() == "r":
+                self._lisaa_funktio("√")
+            return
         try:
 
             self._laskin.lisaa(merkki)

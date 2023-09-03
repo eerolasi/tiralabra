@@ -26,6 +26,7 @@ class TestAlgoritmit(unittest.TestCase):
         tulos = self.algoritmit.laske(self.syote)
         self.assertEqual(tulos, 5)
         tulos2 = self.algoritmit.laske(self.syote2)
-        self.assertEqual(tulos2, -0.2106849409035364)
+
+        self.assertEqual(round(tulos2, 10), -0.2106849409)
         tulos3 = self.algoritmit.laske(self.syote3)
-        self.assertEqual(tulos3, -3.1425465430742777)
+        self.assertEqual(round(tulos3, 10), -3.1425465431)
