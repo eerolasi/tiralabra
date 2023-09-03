@@ -118,7 +118,6 @@ class Algoritmit:
         luku = ""
         edellinen = ""
         for merkki in syote:
-            print(merkki)
             if merkki.isdigit():
                 luku += merkki
             elif merkki == ".":
