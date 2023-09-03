@@ -1,125 +1,47 @@
-from decimal import Decimal
+from services.algoritmit import Algoritmit
 
 
 class Laskin:
-    """Laskimen toiminnasta vastaava luokka."""
+    """Luokka, joka vastaa lausekkeen käsittelystä.
+    """
 
     def __init__(self):
-        """Luokan konstruktori."""
-        self.tulos = None
+        self.lauseke = ""
+        self.tulos = ""
+        self._algoritmit = Algoritmit()
 
-    def tokenize(self, syote):
-        """Palauttaa laskutoimituksksen merkit listana, jossa luvut on muunnettu desimaaliluvuiksi.
-
-        Returns:
-            list: Laskutoimituksen merkit listana.
-        """
-        merkit = []
-        luku = ""
-
-        for merkki in syote:
-            if merkki.isdigit():
-                luku += merkki
-            elif merkki == ".":
-                luku += merkki
-            else:
-                if luku:
-                    merkit.append(Decimal(luku))
-                    luku = ""
-                merkit.append(merkki)
-        if luku:
-            merkit.append(Decimal(luku))
-        return merkit
-
-    def shunting_yard(self, syote):
-        """Palauttaa laskutoimituksen merkit muunnettuna infix-notaatiosta postfix-notaatioon.
-
+    def lisaa(self, merkki):
+        """Lisää merkin lausekkeeseen.
         Args:
-            syote (str): Laskutoimitus infix-notaatiossa.
-
-        Returns:
-            list: Laskutoimituksen merkit listana.
+            merkki (str): Lisättävä merkki.
         """
-        postfix = []
-        operaattorit = []
-        syote_lista = self.tokenize(syote)
-        for merkki in syote_lista:
-            if isinstance(merkki, Decimal):
-                postfix.append(merkki)
-            elif merkki == "(":
-                operaattorit.append(merkki)
-            elif merkki == ")":
-                while operaattorit[-1] != "(":
-                    postfix.append(operaattorit.pop())
-                operaattorit.pop()
-            elif merkki == "-" and not postfix:
-                if not postfix or isinstance(postfix[-1], str):
-                    postfix.append(Decimal(0))
-                operaattorit.append(merkki)
-            elif merkki in "+-*/^":
-                while operaattorit \
-                        and self.precedence(merkki) <= self.precedence(operaattorit[-1]):
-                    postfix.append(operaattorit.pop())
-                operaattorit.append(merkki)
-            else:
-                raise SyntaxError("Virheellinen laskutoimitus.")
 
-        while operaattorit:
-            postfix.append(operaattorit.pop())
-        return postfix
+        self.lauseke += str(merkki)
 
-    def precedence(self, operaattori):
-        """Palauttaa operaattorin prioriteetin.
-
-        Args:
-            operaattori (str): Laskutoimituksen operaattori.
-
-        Returns:
-            int: Operaattorin prioriteetti.
+    def poista_merkki(self):
+        """Poistaa viimeisimmän merkin lausekkeesta.
         """
-        prioriteetit = {"+": 1, "-": 1, "*": 2, "/": 2, "^": 3}
-        return prioriteetit.get(operaattori, 0)
 
-    def laske(self, syote):
-        """Palauttaa laskutoimituksen tuloksen.
+        self.lauseke = self.lauseke[:-1]
 
-        Returns:
-            Decimal: Laskutoimituksen tulos.
+    def nollaa(self):
+        """Nollaa lausekkeen ja tuloksen.
         """
-        postfix = self.shunting_yard(syote)
-        pino = []
-        for merkki in postfix:
-            if isinstance(merkki, Decimal):
-                pino.append(merkki)
-            else:
-                oikea = pino.pop()
-                vasen = pino.pop()
-                tulos = self.laskutoimitus(merkki, vasen, oikea)
-                pino.append(tulos)
 
-        self.tulos = pino.pop()
-        return self.tulos
+        self.lauseke = ""
+        self.tulos = ""
 
-    def laskutoimitus(self, operaattori, vasen, oikea):
-        """Palauttaa laskutoimituksen tuloksen.
+    def laske(self):
+        """Muuntaa lausekkeen listaksi ja laskee sen.
 
-        Args:
-            operaattori (string): Laskutoimituksen operaattori.
-            vasen (Decimal): Laskutoimituksen vasen operandi.
-            oikea (Decimal): Laskutoimituksen oikea operandi.
-
-        Returns:
-            Decimal: Laskutoimituksen tulos.
+        Raises:
+            SyntaxError: Virheellinen syöte.
         """
-        if operaattori == "+":
-            return vasen + oikea
-        if operaattori == "-":
-            return vasen - oikea
-        if operaattori == "*":
-            return vasen * oikea
-        if operaattori == "/":
-            if oikea == 0:
-                raise ZeroDivisionError("Nollalla ei voi jakaa.")
-            return vasen / oikea
-        if operaattori == "^":
-            return vasen ** oikea
+
+        try:
+            lista = self._algoritmit.muunna(self.lauseke)
+            self.tulos = round(self._algoritmit.laske(lista), 10)
+            self.lauseke = ""
+        except Exception as virhe:
+            self.nollaa()
+            raise SyntaxError("Virheellinen syöte") from virhe

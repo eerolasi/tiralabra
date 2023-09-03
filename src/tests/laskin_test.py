@@ -1,32 +1,44 @@
 import unittest
-from services.laskin import Laskin
 from decimal import Decimal
+from services.laskin import Laskin
 
 
 class TestLaskin(unittest.TestCase):
     def setUp(self):
         self.laskin = Laskin()
-        self.syote = "(1.5+2)-2*1/2"
-        self.syote2 = "3^3"
 
-    def test_laskimen_tulos_alustetaan_oikein(self):
-        self.assertEqual(self.laskin.tulos, None)
+    def test_lisaa(self):
+        self.laskin.lisaa("2")
+        self.assertEqual(self.laskin.lauseke, "2")
+        self.laskin.lisaa("+")
+        self.laskin.lisaa("3")
+        self.assertEqual(self.laskin.lauseke, "2+3")
 
-    def test_tokenize_toimii(self):
-        self.assertEqual(self.laskin.tokenize(self.syote), ["(", Decimal(
-            "1.5"), "+", Decimal("2"), ")", "-", Decimal("2"), "*", Decimal("1"), "/", Decimal("2")])
+    def test_poista_merkki(self):
+        self.laskin.lisaa("2")
+        self.laskin.lisaa("+")
+        self.laskin.lisaa("3")
+        self.laskin.poista_merkki()
+        self.assertEqual(self.laskin.lauseke, "2+")
 
-    def test_shunting_yard_toimii(self):
-        self.assertEqual(self.laskin.shunting_yard(self.syote), [Decimal("1.5"), Decimal(
-            "2"), "+", Decimal("2"), Decimal("1"), "*", Decimal("2"), "/", "-"])
+    def test_nollaa(self):
+        self.laskin.lisaa("2")
+        self.laskin.lisaa("+")
+        self.laskin.lisaa("3")
+        self.laskin.nollaa()
+        self.assertEqual(self.laskin.lauseke, "")
+        self.assertEqual(self.laskin.tulos, "")
 
-    def test_precedence_toimii(self):
-        self.assertEqual(self.laskin.precedence("^"), 3)
-        self.assertEqual(self.laskin.precedence("*"), 2)
-        self.assertEqual(self.laskin.precedence("/"), 2)
-        self.assertEqual(self.laskin.precedence("+"), 1)
-        self.assertEqual(self.laskin.precedence("-"), 1)
+    def test_laske(self):
+        self.laskin.lisaa("2.1")
+        self.laskin.lisaa("+")
+        self.laskin.lisaa("3")
+        self.laskin.laske()
+        self.assertEqual(self.laskin.tulos, 5.1)
+        self.assertEqual(self.laskin.lauseke, "")
 
-    def test_laskin_laskee_oikein(self):
-        self.assertEqual(self.laskin.laske(self.syote), 2.5)
-        self.assertEqual(self.laskin.laske(self.syote2), 27)
+    def test_virheellinen_syote(self):
+        self.laskin.lisaa("2")
+        self.laskin.lisaa("+")
+        with self.assertRaises(Exception):
+            self.laskin.laske()

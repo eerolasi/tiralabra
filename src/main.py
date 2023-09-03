@@ -8,7 +8,7 @@ def main():
     window = Tk()
     window.title("Laskin")
     ui = UI(window)
-    ui.start()
+    ui.kaynnista()
     window.mainloop()
 
 
