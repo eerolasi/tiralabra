@@ -17,7 +17,7 @@ poetry install
 ````
 poetry run invoke run
 ````
-![laskinkuva](https://github.com/eerolasi/tiralabra/blob/main/dokumentaatio/laskinkuva.png)
+![laskinkuva](https://github.com/eerolasi/tiralabra/blob/main/dokumentaatio/laskin.png)
 
 ## Syötteet
 - Syötteen voi antaa sekä käyttöliittymän nappien kautta että näppäimistöllä.
