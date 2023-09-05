@@ -100,6 +100,17 @@ class UI:
             elif merkki.lower() == "r":
                 self._lisaa_funktio("√")
             return
+        
+        if merkki not in self._numerot + self._operaattorit + self._funktiot + ["(", ")"]:
+            return
+        
+        if self._laskin.lauseke and self._laskin.lauseke[-1] in self._operaattorit and merkki in self._operaattorit:
+            self._laskin.lauseke = self._laskin.lauseke[:-1] + merkki
+            self._syote.set(self._laskin.lauseke)
+            return
+        
+        if self._laskin.lauseke and merkki == "(" and self._laskin.lauseke[-1] in self._numerot:
+                self._laskin.lisaa("*")
         try:
 
             self._laskin.lisaa(merkki)

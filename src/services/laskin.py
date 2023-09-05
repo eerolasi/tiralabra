@@ -37,6 +37,10 @@ class Laskin:
             SyntaxError: Virheellinen syöte.
         """
 
+        if self.lauseke.count("(") != self.lauseke.count(")"):
+            self.nollaa()
+            raise SyntaxError("Virheellinen syöte")
+
         try:
             lista = self._algoritmit.muunna(self.lauseke)
             self.tulos = round(self._algoritmit.laske(lista), 10)

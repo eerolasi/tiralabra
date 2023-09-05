@@ -41,7 +41,7 @@ class Algoritmit:
         postfix = []
         operaattorit = []
         for merkki in syote:
-            if isinstance(merkki, (int, float)):
+            if isinstance(merkki, float):
                 postfix.append(merkki)
             elif merkki in ["s", "c", "t", "√"]:
                 operaattorit.append(merkki)
@@ -127,16 +127,14 @@ class Algoritmit:
                 luku = ""
                 merkit.append(merkki)
             elif merkki == "-" and (not merkit or merkit[-1] in ["+", "-", "*", "/", "^", "("]):
-
-                merkit.append(0)
+                merkit.append(0.0)
                 merkit.append(merkki)
 
             elif merkki in "sct√":
                 if merkki == "s" and edellinen == "o":
                     continue
                 merkit.append(merkki)
-
-            elif merkki in "+-*/^()π":
+            elif merkki in "+-*/^()":
                 merkit.append(merkki)
             edellinen = merkki
 
