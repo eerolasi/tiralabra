@@ -1,6 +1,7 @@
 # Toteutusdokumentti
 
 ## Ohjelman yleisrakenne
+```
 src
 ├── main.py
 ├── services
@@ -11,6 +12,7 @@ src
 │   └── laskin_test.py
 └── ui
     └── ui.py
+```
 
 - main.py käynnistää käyttöliittymän.
 - hakemistossa ui sijaitseva ui.py sisältää sovelluksen käyttöliittymän koodin.
