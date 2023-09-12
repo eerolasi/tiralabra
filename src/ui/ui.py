@@ -13,16 +13,20 @@ class UI:
         Args:
             root (tkinter.Tk): Käyttöliittymän juuri.
         """
+
         self._root = root
         self._syote = ttk.StringVar()
-        self._laskin = Laskin()
         self._operaattorit = ["+", "-", "*", "/", "^"]
         self._funktiot = ["sin", "cos", "tan", "√"]
         self._numerot = ["7", "8", "9", "4", "5", "6", "1", "2", "3", "0", "."]
+        self._muuttujat = {"x": None, "y": None, "z": None}
+        self._laskin = Laskin(self._operaattorit,
+                              self._funktiot, self._numerot, self._muuttujat)
 
     def kaynnista(self):
         """Alustaa käyttöliittymän näkymän.
         """
+
         self._syote.set("")
         ttk.Label(self._root, textvariable=self._syote).grid(
             row=0, column=0, columnspan=6, padx=5, pady=5
@@ -56,6 +60,18 @@ class UI:
                 pady=5,
             )
 
+        ttk.Button(self._root, text="x", command=lambda i=i: self._lisaa("x")).grid(
+            row=5, column=0, padx=5, pady=5
+        )
+
+        ttk.Button(self._root, text="y", command=lambda i=i: self._lisaa("y")).grid(
+            row=5, column=1, padx=5, pady=5
+        )
+
+        ttk.Button(self._root, text="z", command=lambda i=i: self._lisaa("z")).grid(
+            row=5, column=2, padx=5, pady=5
+        )
+
         ttk.Button(self._root, text="(", command=lambda i=i: self._lisaa("(")).grid(
             row=3, column=4, padx=5, pady=5
         )
@@ -72,7 +88,7 @@ class UI:
             row=4, column=2, padx=5, pady=5
         )
 
-        ttk.Button(self._root, text="=", command=self._laske).grid(
+        ttk.Button(self._root, text="=", command=lambda i=i: self._lisaa("=")).grid(
             row=5, column=4, padx=5, pady=5
         )
 
@@ -80,63 +96,73 @@ class UI:
             row=4, column=3, padx=5, pady=5
         )
 
+        ttk.Button(self._root, text="Ans", command=self._lisaa_muisti).grid(
+            row=5, column=5, padx=5, pady=5
+        )
+
     def _lisaa(self, merkki):
-        """Lisää merkin syötekenttään.
+        """Lisää merkin syötteeseen.
 
         Args:
             merkki (str): Lisättävä merkki.
         """
-        if merkki == "=":
-            self._laske()
-            return
 
         if merkki.isalpha():
             if merkki.lower() == "s":
-                self._lisaa_funktio("sin")
+                self._laskin.tarkasta_funktio("sin")
+                self._syote.set(self._laskin.lauseke)
             elif merkki.lower() == "c":
-                self._lisaa_funktio("cos")
+                self._laskin.tarkasta_funktio("cos")
+                self._syote.set(self._laskin.lauseke)
             elif merkki.lower() == "t":
-                self._lisaa_funktio("tan")
+                self._laskin.tarkasta_funktio("tan")
+                self._syote.set(self._laskin.lauseke)
             elif merkki.lower() == "r":
-                self._lisaa_funktio("√")
+                self._laskin.tarkasta_funktio("√")
+                self._syote.set(self._laskin.lauseke)
+            else:
+                self._laskin.tarkasta(merkki)
+                self._syote.set(self._laskin.lauseke)
             return
-        
-        if merkki not in self._numerot + self._operaattorit + self._funktiot + ["(", ")"]:
+
+        if merkki == "=":
+            if self._laskin.lauseke and self._laskin.lauseke[-1] \
+                    in self._muuttujat and len(self._laskin.lauseke) == 1:
+                self._laskin.tarkasta(merkki)
+                self._syote.set(self._laskin.lauseke)
+                return
+
+            self._laske()
             return
-        
-        if self._laskin.lauseke and self._laskin.lauseke[-1] in self._operaattorit and merkki in self._operaattorit:
-            self._laskin.lauseke = self._laskin.lauseke[:-1] + merkki
-            self._syote.set(self._laskin.lauseke)
-            return
-        
-        if self._laskin.lauseke and merkki == "(" and self._laskin.lauseke[-1] in self._numerot:
-                self._laskin.lisaa("*")
         try:
-
-            self._laskin.lisaa(merkki)
-
+            self._laskin.tarkasta(merkki)
             self._syote.set(self._laskin.lauseke)
 
         except SyntaxError:
             self._syote.set("Virheellinen syöte")
 
     def _lisaa_funktio(self, funktio):
-        """Lisää funktion syötekenttään.
+        """Lisää funktion syötteeseen.
 
         Args:
             funktio (str): Lisättävä funktio.
         """
 
-        try:
-            self._laskin.lisaa(funktio)
-            self._laskin.lisaa("(")
-            self._syote.set(self._laskin.lauseke)
+        self._laskin.tarkasta_funktio(funktio)
+        self._syote.set(self._laskin.lauseke)
 
-        except SyntaxError:
-            self._syote.set("Virheellinen syöte")
+    def _lisaa_muisti(self):
+        """Lisää tuloksen muistista syötteeseen.
+
+        Args:
+            muisti (str): Muistin sisältö.
+        """
+
+        self._laskin.lisaa_muisti()
+        self._syote.set(self._laskin.lauseke)
 
     def _laske(self):
-        """Laskee syötekentässä olevan lausekkeen.
+        """Laskee syötteessä olevan lausekkeen.
         """
 
         try:
@@ -146,14 +172,14 @@ class UI:
             self._syote.set("Virheellinen syöte")
 
     def _nollaa(self):
-        """Nollaa syötekentän.
+        """Nollaa syötteen.
         """
 
         self._laskin.nollaa()
         self._syote.set(self._laskin.lauseke)
 
     def _poista_merkki(self):
-        """Poistaa viimeisimmän merkin syötekentästä.
+        """Poistaa viimeisimmän merkin syötteestä.
         """
 
         self._laskin.poista_merkki()

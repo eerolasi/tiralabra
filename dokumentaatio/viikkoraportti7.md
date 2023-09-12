@@ -5,4 +5,7 @@
 - Kohtasin ongelmia käyttöliittymän kanssa, joten päätin yksinkertaistaa sitä niin, että se näyttää vain yhdenlaisen virheilmoituksen ja syötteen tarkastus tehdään vasta laskuvaiheessa.
 - Lisäsin laskutoimitusvaihtoehtoihin muutaman funktion.
 - Tein dokumentointia.
+
+- Lisäsin muuttujat ja muistin.
+
 - Käytin aikaa noin 15 tuntia.

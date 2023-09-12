@@ -5,7 +5,7 @@
 
 
 ## Testattu
-Sovelluslogiikka on testattu automaattisella yksikkötestauksella. Järjestelmätestausta on suoritettu manuaalisesti erilaisin syöttein. 
+Sovelluslogiikka on testattu automaattisella yksikkötestauksella. Järjestelmätestausta on suoritettu manuaalisesti erilaisin syöttein ja tuloksia vertaillen toiseen laskimeen.
 
 ## Testien suorittaminen
 GitHub Actions suorittaa testit aina GitHubiin uuden koodin pushauksen yhteydessä.

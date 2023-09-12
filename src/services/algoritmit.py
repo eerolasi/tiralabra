@@ -5,6 +5,12 @@ class Algoritmit:
     """Luokka, joka vastaa algoritmien toteuttamisesta.
     """
 
+    def __init__(self, operaattorit, funktiot, numerot, muuttujat):
+        self._operaattorit = operaattorit
+        self._funktiot = funktiot
+        self._numerot = numerot
+        self._muuttujat = muuttujat
+
     def laske(self, syote):
         """Palauttaa laskutoimituksen tuloksen.
 
@@ -14,16 +20,17 @@ class Algoritmit:
         Returns:
             float: Laskutoimituksen tulos.
         """
+
         postfix = self._shunting_yard(syote)
         pino = []
         for merkki in postfix:
             if isinstance(merkki, (int, float)):
                 pino.append(merkki)
-            elif merkki in ["+", "-", "*", "/", "^"]:
+            elif merkki in self._operaattorit:
                 oikea = pino.pop()
                 vasen = pino.pop()
                 pino.append(self._laskutoimitus(merkki, vasen, oikea))
-            elif merkki in ["s", "c", "t", "√"]:
+            elif merkki in self._funktiot:
                 luku = pino.pop()
                 pino.append(self._laskutoimitus(merkki, luku, None))
         return pino.pop()
@@ -43,9 +50,9 @@ class Algoritmit:
         for merkki in syote:
             if isinstance(merkki, float):
                 postfix.append(merkki)
-            elif merkki in ["s", "c", "t", "√"]:
+            elif merkki in self._funktiot:
                 operaattorit.append(merkki)
-            elif merkki in ["+", "-", "*", "/", "^"]:
+            elif merkki in self._operaattorit:
                 while operaattorit and self._prioriteetti(merkki) \
                         <= self._prioriteetti(operaattorit[-1]):
                     postfix.append(operaattorit.pop())
@@ -66,12 +73,13 @@ class Algoritmit:
 
         Args:
             operaattori (str): Laskutoimituksen operaattori.
+
         Returns:
             int: Operaattorin prioriteetti.
         """
 
         prioriteetit = {"+": 1, "-": 1, "*": 2, "/": 2,
-                        "^": 3, "s": 4, "c": 4, "t": 4, "√": 4}
+                        "^": 3, "sin": 4, "cos": 4, "tan": 4, "√": 4}
         return prioriteetit.get(operaattori, 0)
 
     def _laskutoimitus(self, operaattori, vasen, oikea):
@@ -81,6 +89,7 @@ class Algoritmit:
             operaattori (str): Laskutoimituksen operaattori.
             vasen (float): Laskutoimituksen vasen operandi.
             oikea (float): Laskutoimituksen oikea operandi.
+
         Returns:
             float: Laskutoimituksen tulos.
         """
@@ -95,11 +104,11 @@ class Algoritmit:
             return vasen / oikea
         elif operaattori == "^":
             return vasen ** oikea
-        elif operaattori == "s":
+        elif operaattori == "sin":
             return math.sin(vasen)
-        elif operaattori == "c":
+        elif operaattori == "cos":
             return math.cos(vasen)
-        elif operaattori == "t":
+        elif operaattori == "tan":
             return math.tan(vasen)
         elif operaattori == "√":
             return math.sqrt(vasen)
@@ -118,6 +127,10 @@ class Algoritmit:
         luku = ""
         edellinen = ""
         for merkki in syote:
+            if merkki in self._muuttujat:
+                if self._muuttujat[merkki] is None:
+                    return None
+                merkit.append(self._muuttujat[merkki])
             if merkki.isdigit():
                 luku += merkki
             elif merkki == ".":
@@ -126,18 +139,21 @@ class Algoritmit:
                 merkit.append(float(luku))
                 luku = ""
                 merkit.append(merkki)
-            elif merkki == "-" and (not merkit or merkit[-1] in ["+", "-", "*", "/", "^", "("]):
+            elif merkki == "-" and edellinen == "-":
+                merkit.pop()
+                merkit.append("+")
+            elif merkki in "+-" and (not merkit or edellinen in
+                                     self._operaattorit or edellinen == "("):
                 merkit.append(0.0)
                 merkit.append(merkki)
-
-            elif merkki in "sct√":
-                if merkki == "s" and edellinen == "o":
-                    continue
+            elif merkki in self._operaattorit or merkki in "()":
                 merkit.append(merkki)
-            elif merkki in "+-*/^()":
-                merkit.append(merkki)
+            for funktio in self._funktiot:
+                if merkki == funktio[0]:
+                    if merkki == "s" and edellinen == "o":
+                        continue
+                    merkit.append(funktio)
             edellinen = merkki
-
         if luku:
             merkit.append(float(luku))
         return merkit
